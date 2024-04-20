@@ -7,44 +7,29 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, setup)
+        .add_systems(Update, circle_movement)
         .run();
 }
 
-const X_EXTENT: f32 = 600.0;
+#[derive(Component)]
+enum Direction {
+    Up,
+    Down,
+}
 
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
-    let shapes = [
-        Mesh2dHandle(meshes.add(Circle { radius: 50.0 })),
-        Mesh2dHandle(meshes.add(Ellipse::new(25.0, 50.0))),
-        Mesh2dHandle(meshes.add(Capsule2d::new(25.0, 50.0))),
-        Mesh2dHandle(meshes.add(Rectangle::new(50.0, 100.0))),
-        Mesh2dHandle(meshes.add(RegularPolygon::new(50.0, 12))),
-        Mesh2dHandle(meshes.add(Triangle2d::new(
-            Vec2::Y * 50.0,
-            Vec2::new(-50.0, -50.0),
-            Vec2::new(50.0, -50.0),
-        ))),
-    ];
-    let num_shapes = shapes.len();
+    let circle = Mesh2dHandle(meshes.add(Circle { radius: 50.0 }));
 
-    for (i, shape) in shapes.into_iter().enumerate() {
-        let color = Color::hsl(360.0 * i as f32 / num_shapes as f32, 0.95, 0.7);
+    let color = Color::rgb(255.0, 0.0, 0.0);
 
-        commands.spawn(MaterialMesh2dBundle {
-            mesh: shape,
-            material: materials.add(color),
-            transform: Transform::from_xyz(
-                -X_EXTENT / 2.0 + i as f32 / (num_shapes - 1) as f32 * X_EXTENT,
-                0.0,
-                0.0,
-            ),
-            ..default()
-        });
-    }
+    commands.spawn(MaterialMesh2dBundle {
+        mesh: circle,
+        material: materials.add(color),
+        transform: Transform::from_xyz(200.0, 0.0, 0.0),
+        ..default()
+    });
 }
+
+fn circle_movement() {}
