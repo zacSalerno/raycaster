@@ -1,14 +1,18 @@
-use bevy::{
-    input::*,
-    prelude::*,
-    sprite::{MaterialMesh2dBundle, Mesh2dHandle},
-};
+mod debug;
+mod ray;
+mod ray_movement;
+
+use bevy::prelude::*;
+use debug::*;
+use ray::*;
+use ray_movement::*;
 
 pub const HEIGHT: f32 = 750.0;
 pub const WIDTH: f32 = 1000.0;
 
 fn main() {
     App::new()
+        .insert_resource(ClearColor(Color::rgb(0.1, 0.1, 0.1)))
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
@@ -23,46 +27,12 @@ fn main() {
                 .build(),
         )
         .add_systems(Startup, setup)
-        .add_systems(Update, circle_movement)
+        .add_plugins(RayPlugin)
+        .add_plugins(MovementPlugin)
+        .add_plugins(DebugPlugin)
         .run();
 }
 
-fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-) {
+fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-
-    let circle = Mesh2dHandle(meshes.add(Circle { radius: 50.0 }));
-
-    let color = Color::rgb(255.0, 0.0, 0.0);
-
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: circle,
-        material: materials.add(color),
-        transform: Transform::from_xyz(200.0, 0.0, 0.0),
-        ..default()
-    });
-}
-
-fn circle_movement(
-    mut balls: Query<(&mut Transform, &Mesh2dHandle)>,
-    input: Res<ButtonInput<KeyCode>>,
-    time: Res<Time>,
-) {
-    for (mut transform, _) in &mut balls {
-        if input.pressed(KeyCode::KeyW) {
-            transform.translation.y += 100.0 * time.delta_seconds();
-        }
-        if input.pressed(KeyCode::KeyS) {
-            transform.translation.y -= 100.0 * time.delta_seconds();
-        }
-        if input.pressed(KeyCode::KeyD) {
-            transform.translation.x += 100.0 * time.delta_seconds();
-        }
-        if input.pressed(KeyCode::KeyA) {
-            transform.translation.x -= 100.0 * time.delta_seconds();
-        }
-    }
 }
