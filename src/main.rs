@@ -1,14 +1,15 @@
+mod collision;
+mod constants;
 mod debug;
 mod ray;
 mod ray_movement;
 
 use bevy::prelude::*;
+use collision::*;
+use constants::*;
 use debug::*;
 use ray::*;
 use ray_movement::*;
-
-pub const HEIGHT: f32 = 750.0;
-pub const WIDTH: f32 = 1000.0;
 
 fn main() {
     App::new()
@@ -29,6 +30,7 @@ fn main() {
         .add_systems(Startup, setup)
         .add_plugins(RayPlugin)
         .add_plugins(MovementPlugin)
+        .add_plugins(CollisionPlugin)
         .add_plugins(DebugPlugin)
         .run();
 }
