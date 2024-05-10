@@ -1,15 +1,14 @@
-mod collision;
 mod constants;
 mod debug;
 mod ray;
-mod ray_movement;
+mod shape;
 
 use bevy::prelude::*;
-use collision::*;
+use bevy_rapier2d::prelude::*;
 use constants::*;
 use debug::*;
 use ray::*;
-use ray_movement::*;
+use shape::*;
 
 fn main() {
     App::new()
@@ -27,10 +26,12 @@ fn main() {
                 })
                 .build(),
         )
+        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        .add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, setup)
+        .add_systems(Update, bevy::window::close_on_esc)
         .add_plugins(RayPlugin)
-        .add_plugins(MovementPlugin)
-        .add_plugins(CollisionPlugin)
+        .add_plugins(ShapePlugin)
         .add_plugins(DebugPlugin)
         .run();
 }
